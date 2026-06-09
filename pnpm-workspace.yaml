@@ -1,0 +1,9 @@
+# Supply-chain hardening for pnpm installs.
+# minimumReleaseAge: wait 7 days before installing newly published versions,
+#   so malware caught & unpublished within hours never lands in the lockfile.
+# trustPolicy: no-downgrade prevents silently accepting downgraded packages.
+minimumReleaseAge: 10080
+trustPolicy: no-downgrade
+
+onlyBuiltDependencies:
+  - better-sqlite3
