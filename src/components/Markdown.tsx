@@ -3,8 +3,9 @@ import { Fragment, type ReactNode } from "react";
 // Renders a safe subset of markdown as React nodes. User text is never treated
 // as HTML, so there is no XSS surface (no dangerouslySetInnerHTML).
 
+// Capture groups: 1=link label, 2=link url, 3=bold, 4=italic, 5=code, 6=bare url.
 const INLINE =
-  /(\[[^\]]+\]\(https?:\/\/[^\s)]+\))|(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)|(https?:\/\/[^\s]+)/g;
+  /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)|(https?:\/\/[^\s]+)/g;
 
 function parseInline(text: string, keyPrefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];
@@ -14,28 +15,24 @@ function parseInline(text: string, keyPrefix: string): ReactNode[] {
   INLINE.lastIndex = 0;
   while ((match = INLINE.exec(text)) !== null) {
     if (match.index > last) nodes.push(text.slice(last, match.index));
-    const token = match[0];
+    const [token, label, url, bold, italic, code, bareUrl] = match;
     const key = `${keyPrefix}-${i++}`;
-    if (match[1]) {
-      // [text](url)
-      const close = token.indexOf("](");
-      const label = token.slice(1, close);
-      const url = token.slice(close + 2, -1);
+    if (label && url) {
       nodes.push(
         <a key={key} href={url} rel="nofollow noopener" target="_blank">
           {label}
         </a>,
       );
-    } else if (match[2]) {
-      nodes.push(<strong key={key}>{token.slice(2, -2)}</strong>);
-    } else if (match[3]) {
-      nodes.push(<em key={key}>{token.slice(1, -1)}</em>);
-    } else if (match[4]) {
-      nodes.push(<code key={key}>{token.slice(1, -1)}</code>);
-    } else {
+    } else if (bold) {
+      nodes.push(<strong key={key}>{bold.slice(2, -2)}</strong>);
+    } else if (italic) {
+      nodes.push(<em key={key}>{italic.slice(1, -1)}</em>);
+    } else if (code) {
+      nodes.push(<code key={key}>{code.slice(1, -1)}</code>);
+    } else if (bareUrl) {
       nodes.push(
-        <a key={key} href={token} rel="nofollow noopener" target="_blank">
-          {token}
+        <a key={key} href={bareUrl} rel="nofollow noopener" target="_blank">
+          {bareUrl}
         </a>,
       );
     }

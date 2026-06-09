@@ -28,6 +28,7 @@ export default async function UserPage({
 }) {
   const [{ username }, viewer] = await Promise.all([params, getCurrentUser()]);
 
+  // Must resolve first: the queries below depend on profile.id / invitedById.
   const profile = await db
     .select()
     .from(users)
