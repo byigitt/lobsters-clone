@@ -11,29 +11,40 @@ async function save(formData: FormData) {
   "use server";
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  const about = String(formData.get("about") || "").trim();
-  const email = String(formData.get("email") || "").trim();
-  await db
-    .update(users)
-    .set({ about, email: email || user!.email })
-    .where(eq(users.id, user!.id))
-    .run();
-  redirect("/settings?saved=1");
+  const about = String(formData.get("about") || "").trim().slice(0, 5000);
+  const email = String(formData.get("email") || "").trim().toLowerCase();
+  const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) && email.length <= 254;
+  if (email && !emailValid) redirect("/settings?error=email");
+  let ok = true;
+  try {
+    await db
+      .update(users)
+      .set({ about, email: email || user.email })
+      .where(eq(users.id, user.id))
+      .run();
+  } catch {
+    ok = false; // email unique constraint clash
+  }
+  // redirect() must live outside try/catch so NEXT_REDIRECT isn't swallowed.
+  redirect(ok ? "/settings?saved=1" : "/settings?error=email");
 }
 
 export default async function SettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; error?: string }>;
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  const { saved } = await searchParams;
+  const { saved, error } = await searchParams;
 
   return (
     <main>
       <h1 className="page-title">Settings</h1>
       {saved && <div className="flash">Saved.</div>}
+      {error === "email" && (
+        <p className="error">That email is invalid or already in use.</p>
+      )}
       <form className="box" action={save} style={{ maxWidth: 460 }}>
         <label htmlFor="username">Username</label>
         <input

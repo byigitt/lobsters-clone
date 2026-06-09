@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull, or } from "drizzle-orm";
 import { db } from "@/db";
 import { users, invitations } from "@/db/schema";
 import { hashPassword, createSession, getCurrentUser } from "@/lib/auth";
@@ -24,9 +24,9 @@ async function register(formData: FormData) {
   "use server";
   const code = String(formData.get("code") || "");
   const username = String(formData.get("username") || "").trim();
-  const email = String(formData.get("email") || "").trim();
+  const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
-  const about = String(formData.get("about") || "").trim();
+  const about = String(formData.get("about") || "").trim().slice(0, 5000);
 
   const invite = await db
     .select()
@@ -36,36 +36,51 @@ async function register(formData: FormData) {
   if (!invite || invite.usedById) redirect(`/signup/${code}?error=invite`);
 
   if (!USERNAME_RE.test(username)) redirect(`/signup/${code}?error=username`);
-  if (password.length < 6) redirect(`/signup/${code}?error=password`);
-  if (!email.includes("@")) redirect(`/signup/${code}?error=email`);
+  if (password.length < 6 || password.length > 200)
+    redirect(`/signup/${code}?error=password`);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || email.length > 254)
+    redirect(`/signup/${code}?error=email`);
 
   const existing = await db
-    .select()
+    .select({ id: users.id })
     .from(users)
-    .where(eq(users.username, username))
+    .where(or(eq(users.username, username), eq(users.email, email)))
     .get();
   if (existing) redirect(`/signup/${code}?error=taken`);
 
   const passwordHash = await hashPassword(password);
-  const [newUser] = await db
-    .insert(users)
-    .values({
-      username,
-      email,
-      passwordHash,
-      about,
-      invitedById: invite!.senderId,
-    })
-    .returning()
-    .all();
+  let newUserId: number | null = null;
+  try {
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        username,
+        email,
+        passwordHash,
+        about,
+        invitedById: invite.senderId,
+      })
+      .returning()
+      .all();
+    newUserId = newUser.id;
+  } catch {
+    newUserId = null; // unique constraint race (username/email taken)
+  }
+  // redirect() must live outside try/catch so NEXT_REDIRECT isn't swallowed.
+  if (newUserId === null) redirect(`/signup/${code}?error=taken`);
 
-  await db
+  // Atomically claim the invite; if it was used concurrently, abort.
+  const claim = await db
     .update(invitations)
-    .set({ usedById: newUser.id })
-    .where(eq(invitations.id, invite!.id))
+    .set({ usedById: newUserId })
+    .where(and(eq(invitations.id, invite.id), isNull(invitations.usedById)))
     .run();
+  if (claim.changes === 0) {
+    await db.delete(users).where(eq(users.id, newUserId)).run();
+    redirect(`/signup/${code}?error=invite`);
+  }
 
-  await createSession(newUser.id);
+  await createSession(newUserId);
   redirect("/");
 }
 

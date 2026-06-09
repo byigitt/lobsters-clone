@@ -15,10 +15,12 @@ async function submit(formData: FormData) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const title = String(formData.get("title") || "").trim();
+  const title = String(formData.get("title") || "").trim().slice(0, 200);
   const url = String(formData.get("url") || "").trim();
-  const description = String(formData.get("description") || "").trim();
-  const selectedTags = formData.getAll("tags").map(String);
+  const description = String(formData.get("description") || "")
+    .trim()
+    .slice(0, 20000);
+  const selectedTags = formData.getAll("tags").map(String).slice(0, 10);
 
   if (!title) redirect("/stories/new?error=title");
   if (!url && !description) redirect("/stories/new?error=content");
@@ -26,11 +28,16 @@ async function submit(formData: FormData) {
 
   let domain: string | null = null;
   if (url) {
+    let parsed: URL | null = null;
     try {
-      domain = new URL(url).hostname.replace(/^www\./, "");
+      parsed = new URL(url);
     } catch {
-      redirect("/stories/new?error=url");
+      parsed = null;
     }
+    // Only http(s) links are allowed, blocking javascript:/data: href injection.
+    if (!parsed || (parsed.protocol !== "http:" && parsed.protocol !== "https:"))
+      redirect("/stories/new?error=url");
+    domain = parsed!.hostname.replace(/^www\./, "");
   }
 
   // enforce privileged tags for non-new users

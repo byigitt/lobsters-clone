@@ -17,14 +17,15 @@ async function sendInvite(formData: FormData) {
   if (isNewUser(user!.createdAt) || !user!.canInvite)
     redirect("/settings/invite?error=perm");
 
-  const email = String(formData.get("email") || "").trim();
-  const memo = String(formData.get("memo") || "").trim();
-  if (!email.includes("@")) redirect("/settings/invite?error=email");
+  const email = String(formData.get("email") || "").trim().toLowerCase();
+  const memo = String(formData.get("memo") || "").trim().slice(0, 500);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || email.length > 254)
+    redirect("/settings/invite?error=email");
 
   const code = inviteCode();
   await db
     .insert(invitations)
-    .values({ code, email, memo, senderId: user!.id })
+    .values({ code, email, memo, senderId: user.id })
     .run();
   redirect("/settings/invite?sent=1");
 }

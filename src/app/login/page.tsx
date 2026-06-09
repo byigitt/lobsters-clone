@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
@@ -7,7 +8,7 @@ import {
   verifyPassword,
   createSession,
 } from "@/lib/auth";
-
+import { rateLimit } from "@/lib/ratelimit";
 import { pageMeta } from "@/lib/meta";
 
 export const metadata = pageMeta("Login", "Sign in to your account.");
@@ -17,6 +18,12 @@ async function login(formData: FormData) {
   "use server";
   const username = String(formData.get("username") || "").trim();
   const password = String(formData.get("password") || "");
+
+  // Brute-force guard: 10 attempts per 5 minutes per client IP.
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  if (!rateLimit(`login:${ip}`, 10, 5 * 60_000).ok)
+    redirect("/login?error=throttled");
+
   const user = await db
     .select()
     .from(users)
@@ -44,6 +51,10 @@ export default async function LoginPage({
       <h1 className="page-title">Login</h1>
       {error === "banned" ? (
         <p className="error">This account has been banned.</p>
+      ) : error === "throttled" ? (
+        <p className="error">
+          Too many login attempts. Please wait a few minutes and try again.
+        </p>
       ) : error ? (
         <p className="error">Invalid username or password.</p>
       ) : null}

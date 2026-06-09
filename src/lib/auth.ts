@@ -48,7 +48,10 @@ export async function getCurrentUser(): Promise<User | null> {
     .innerJoin(users, eq(sessions.userId, users.id))
     .where(eq(sessions.token, token))
     .get();
-  return row?.user ?? null;
+  if (!row) return null;
+  // Banned users are treated as logged out everywhere, even with a live cookie.
+  if (row.user.bannedAt) return null;
+  return row.user;
 }
 
 
