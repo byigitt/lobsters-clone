@@ -15,8 +15,7 @@ export default async function UserPage({
 }: {
   params: Promise<{ username: string }>;
 }) {
-  const { username } = await params;
-  const viewer = await getCurrentUser();
+  const [{ username }, viewer] = await Promise.all([params, getCurrentUser()]);
 
   const profile = await db
     .select()
@@ -25,21 +24,21 @@ export default async function UserPage({
     .get();
   if (!profile) notFound();
 
-  const invitedBy = profile.invitedById
-    ? await db
-        .select({ username: users.username })
-        .from(users)
-        .where(eq(users.id, profile.invitedById))
-        .get()
-    : null;
-
-  const invitees = await db
-    .select({ username: users.username, createdAt: users.createdAt })
-    .from(users)
-    .where(eq(users.invitedById, profile.id))
-    .all();
-
-  const stories = await getStoriesByUser(username, viewer?.id);
+  const [invitedBy, invitees, stories] = await Promise.all([
+    profile.invitedById
+      ? db
+          .select({ username: users.username })
+          .from(users)
+          .where(eq(users.id, profile.invitedById))
+          .get()
+      : Promise.resolve(null),
+    db
+      .select({ username: users.username, createdAt: users.createdAt })
+      .from(users)
+      .where(eq(users.invitedById, profile.id))
+      .all(),
+    getStoriesByUser(username, viewer?.id),
+  ]);
   const newbie = isNewUser(profile.createdAt);
 
   return (

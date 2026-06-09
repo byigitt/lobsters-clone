@@ -10,8 +10,7 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const user = await getCurrentUser();
-  const sp = await searchParams;
+  const [user, sp] = await Promise.all([getCurrentUser(), searchParams]);
   const page = Math.max(1, parseInt(sp.page || "1", 10) || 1);
   const stories = await getHottest(user?.id, 25, (page - 1) * 25);
 

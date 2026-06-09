@@ -18,8 +18,7 @@ export default async function StoryPage({
 }: {
   params: Promise<{ shortId: string; slug: string }>;
 }) {
-  const { shortId } = await params;
-  const user = await getCurrentUser();
+  const [{ shortId }, user] = await Promise.all([params, getCurrentUser()]);
   const story = await getStory(shortId, user?.id);
   if (!story) notFound();
 

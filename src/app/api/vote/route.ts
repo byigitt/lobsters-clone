@@ -21,13 +21,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "bad request" }, { status: 400 });
 
   if (kind === "story") {
-    const existing = await db
-      .select()
-      .from(storyVotes)
-      .where(and(eq(storyVotes.userId, user.id), eq(storyVotes.storyId, id)))
-      .get();
-
-    const story = await db.select().from(stories).where(eq(stories.id, id)).get();
+    const [existing, story] = await Promise.all([
+      db
+        .select()
+        .from(storyVotes)
+        .where(and(eq(storyVotes.userId, user.id), eq(storyVotes.storyId, id)))
+        .get(),
+      db.select().from(stories).where(eq(stories.id, id)).get(),
+    ]);
     if (!story)
       return NextResponse.json({ error: "not found" }, { status: 404 });
 
@@ -65,16 +66,14 @@ export async function POST(req: Request) {
   }
 
   // comment
-  const existing = await db
-    .select()
-    .from(commentVotes)
-    .where(and(eq(commentVotes.userId, user.id), eq(commentVotes.commentId, id)))
-    .get();
-  const comment = await db
-    .select()
-    .from(comments)
-    .where(eq(comments.id, id))
-    .get();
+  const [existing, comment] = await Promise.all([
+    db
+      .select()
+      .from(commentVotes)
+      .where(and(eq(commentVotes.userId, user.id), eq(commentVotes.commentId, id)))
+      .get(),
+    db.select().from(comments).where(eq(comments.id, id)).get(),
+  ]);
   if (!comment)
     return NextResponse.json({ error: "not found" }, { status: 404 });
 

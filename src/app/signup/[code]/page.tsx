@@ -64,10 +64,12 @@ export default async function SignupPage({
   params: Promise<{ code: string }>;
   searchParams: Promise<{ error?: string }>;
 }) {
-  const current = await getCurrentUser();
+  const [current, { code }, { error }] = await Promise.all([
+    getCurrentUser(),
+    params,
+    searchParams,
+  ]);
   if (current) redirect("/");
-  const { code } = await params;
-  const { error } = await searchParams;
 
   const invite = await db
     .select({

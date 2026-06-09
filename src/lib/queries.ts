@@ -149,6 +149,14 @@ export async function getStoriesByUser(username: string, viewerId?: number) {
   return attachMeta(rows, viewerId);
 }
 
+export async function getStoriesByDomain(domain: string, viewerId?: number) {
+  const rows = await baseSelect()
+    .where(eq(stories.domain, domain))
+    .orderBy(desc(stories.createdAt))
+    .all();
+  return attachMeta(rows, viewerId);
+}
+
 export async function getStory(shortId: string, viewerId?: number) {
   const row = await baseSelect().where(eq(stories.shortId, shortId)).get();
   if (!row) return null;

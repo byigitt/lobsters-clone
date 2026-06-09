@@ -12,8 +12,7 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const { q } = await searchParams;
-  const user = await getCurrentUser();
+  const [{ q }, user] = await Promise.all([searchParams, getCurrentUser()]);
   const query = (q || "").trim();
 
   let results = [] as Awaited<ReturnType<typeof getStory>>[];

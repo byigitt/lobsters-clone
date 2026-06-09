@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db } from "@/db";
 import { invitations, users } from "@/db/schema";
@@ -34,12 +34,14 @@ export default async function InvitePage({
 }: {
   searchParams: Promise<{ error?: string; sent?: string }>;
 }) {
-  const user = await getCurrentUser();
+  const [user, { error, sent }, hdrs] = await Promise.all([
+    getCurrentUser(),
+    searchParams,
+    headers(),
+  ]);
   if (!user) redirect("/login");
-  const { error, sent } = await searchParams;
   const newbie = isNewUser(user.createdAt);
 
-  const hdrs = await headers();
   const host = hdrs.get("host") || "localhost:3000";
   const proto = hdrs.get("x-forwarded-proto") || "http";
   const base = `${proto}://${host}`;
@@ -51,18 +53,18 @@ export default async function InvitePage({
     .orderBy(desc(invitations.createdAt))
     .all();
 
-  // resolve used-by usernames
+  // resolve used-by usernames in a single query (no N+1 loop)
   const usedByIds = sentInvites
     .map((i) => i.usedById)
     .filter((x): x is number => !!x);
   const usedByMap = new Map<number, string>();
-  for (const id of usedByIds) {
-    const u = await db
-      .select({ username: users.username })
+  if (usedByIds.length > 0) {
+    const accepters = await db
+      .select({ id: users.id, username: users.username })
       .from(users)
-      .where(eq(users.id, id))
-      .get();
-    if (u) usedByMap.set(id, u.username);
+      .where(inArray(users.id, usedByIds))
+      .all();
+    for (const u of accepters) usedByMap.set(u.id, u.username);
   }
 
   return (
