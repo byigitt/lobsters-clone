@@ -121,7 +121,7 @@ export default async function SignupPage({
       <form className="box" action={register} style={{ maxWidth: 460 }}>
         <input type="hidden" name="code" value={code} />
         <label htmlFor="username">Username</label>
-        <input id="username" name="username" type="text" required autoFocus />
+        <input id="username" name="username" type="text" required />
         <label htmlFor="email">Email</label>
         <input
           id="email"

@@ -95,7 +95,7 @@ export default async function NewStoryPage({
       {error && <p className="error">{errMsg[error] || "Something went wrong."}</p>}
       <form className="box" action={submit}>
         <label htmlFor="title">Title</label>
-        <input id="title" name="title" type="text" required autoFocus />
+        <input id="title" name="title" type="text" required />
 
         <label htmlFor="url">URL</label>
         <input id="url" name="url" type="url" placeholder="https://…" />

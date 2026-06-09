@@ -46,7 +46,7 @@ export default async function LoginPage({
       ) : null}
       <form className="box" action={login} style={{ maxWidth: 360 }}>
         <label htmlFor="username">Username</label>
-        <input id="username" name="username" type="text" autoFocus required />
+        <input id="username" name="username" type="text" required />
         <label htmlFor="password">Password</label>
         <input id="password" name="password" type="password" required />
         <div>

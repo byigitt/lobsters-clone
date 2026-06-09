@@ -48,6 +48,7 @@ export function Voter({
   return (
     <div className="voters">
       <button
+        type="button"
         className={`upvoter ${voted ? "voted" : ""}`}
         aria-label="upvote"
         onClick={toggle}

@@ -45,7 +45,7 @@ export default async function SearchPage({
           name="q"
           defaultValue={query}
           placeholder="Search stories…"
-          autoFocus
+          aria-label="Search stories"
         />
         <button className="btn btn-primary" type="submit">
           Search

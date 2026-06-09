@@ -46,7 +46,13 @@ function CommentItem({
             {loggedIn && (
               <>
                 <span className="tagline-sep">|</span>
-                <a onClick={() => setReplying((r) => !r)}>reply</a>
+                <button
+                  type="button"
+                  className="linklike"
+                  onClick={() => setReplying((r) => !r)}
+                >
+                  reply
+                </button>
               </>
             )}
           </div>
@@ -60,8 +66,10 @@ function CommentItem({
                 onChange={(e) => setBody(e.target.value)}
                 style={{ minHeight: "4rem" }}
                 placeholder="Write a reply…"
+                aria-label="Reply text"
               />
               <button
+                type="button"
                 className="btn btn-primary"
                 disabled={busy || !body.trim()}
                 onClick={async () => {
@@ -156,8 +164,10 @@ function TopLevelForm({ onSubmit }: { onSubmit: (body: string) => Promise<void> 
         value={body}
         onChange={(e) => setBody(e.target.value)}
         placeholder="Add to the discussion… (markdown supported)"
+        aria-label="Comment text"
       />
       <button
+        type="button"
         className="btn btn-primary"
         disabled={busy || !body.trim()}
         onClick={async () => {

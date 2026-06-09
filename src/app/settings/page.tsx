@@ -35,8 +35,17 @@ export default async function SettingsPage({
       <h1 className="page-title">Settings</h1>
       {saved && <div className="flash">Saved.</div>}
       <form className="box" action={save} style={{ maxWidth: 460 }}>
-        <label>Username</label>
-        <input type="text" value={user.username} disabled />
+        <label htmlFor="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          value={user.username}
+          readOnly
+          aria-describedby="username-hint"
+        />
+        <span id="username-hint" className="hint">
+          Usernames can&apos;t be changed.
+        </span>
         <label htmlFor="email">Email</label>
         <input id="email" name="email" type="email" defaultValue={user.email} />
         <label htmlFor="about">About</label>
