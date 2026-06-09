@@ -25,7 +25,11 @@ export async function Header() {
               <Link href={`/u/${user.username}`}>{user.username}</Link>
               <span className="muted">({user.karma})</span>
               <Link href="/settings">Settings</Link>
-              <Link href="/logout">Logout</Link>
+              <form action="/logout" method="post" className="logout-form">
+                <button type="submit" className="linklike">
+                  Logout
+                </button>
+              </form>
             </>
           ) : (
             <Link href="/login">Login</Link>
