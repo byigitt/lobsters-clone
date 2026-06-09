@@ -10,13 +10,11 @@ import { ago } from "@/lib/time";
 
 function CommentItem({
   node,
-  storyId,
   loggedIn,
   votedIds,
   onReply,
 }: {
   node: CommentNode;
-  storyId: number;
   loggedIn: boolean;
   votedIds: Set<number>;
   onReply: (parentId: number, body: string) => Promise<void>;
@@ -89,7 +87,6 @@ function CommentItem({
                 <CommentItem
                   key={child.id}
                   node={child}
-                  storyId={storyId}
                   loggedIn={loggedIn}
                   votedIds={votedIds}
                   onReply={onReply}
@@ -142,7 +139,6 @@ export function CommentTree({
             <CommentItem
               key={c.id}
               node={c}
-              storyId={storyId}
               loggedIn={loggedIn}
               votedIds={votedSet}
               onReply={(pid, b) => postComment(pid, b)}
