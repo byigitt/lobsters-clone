@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { stories, storyTags, tags } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";

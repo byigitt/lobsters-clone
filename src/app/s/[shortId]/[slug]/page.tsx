@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { commentVotes, comments as commentsTable } from "@/db/schema";

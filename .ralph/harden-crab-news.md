@@ -17,7 +17,7 @@ Fix all react-doctor findings, verify with react-scan, enforce DRY/SRP/KISS, and
 - [x] 7. Cleanup: unused exports, index maps, hoisted constants — DONE, pushed
 - [x] 8. react-doctor re-run: score 39 → 82; only 1 remaining = justified false positive (u/[username] genuine data dependency, documented in code) — DONE, pushed
 - [x] 9. react-scan: injected runtime scanner via CDP. Verified one upvote re-renders ONLY the clicked Voter (idle baseline=0). memoized Voter island. No actionable render issues. DONE, pushed
-- [ ] 10. DRY: extract repeated patterns (byline/story-meta rendering, story-list fetch+attach, viewer vote lookups) into shared helpers/components. commit+push
+- [x] 10. DRY: extracted AuthorLink component, commentLabel/pluralize formatters, searchStories query (removed search N+1). DONE, pushed
 - [ ] 11. SRP/KISS: ensure each module/component has one responsibility; simplify over-complex code; no dead code. commit+push
 - [ ] 12. API/backend security audit: auth on every mutation, input validation/whitelisting, IDOR checks, rate-limiting consideration, no SQL injection (drizzle params), error handling that doesn't leak. Fix issues. commit+push
 - [ ] 13. Final: tsc + next build clean, react-doctor + react-scan clean, all commits pushed. Summarize.
