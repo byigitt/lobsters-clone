@@ -1,7 +1,7 @@
 {
   "name": "harden-crab-news",
   "taskFile": ".ralph/harden-crab-news.md",
-  "iteration": 1,
+  "iteration": 2,
   "maxIterations": 14,
   "itemsPerIteration": 1,
   "reflectEvery": 0,

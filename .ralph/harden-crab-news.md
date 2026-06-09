@@ -8,14 +8,14 @@ Fix all react-doctor findings, verify with react-scan, enforce DRY/SRP/KISS, and
 - Keep changes minimal and faithful to lobste.rs look. No behavior regressions.
 
 ## Checklist (one per iteration)
-- [ ] 1. Security: pnpm hardening — add pnpm-workspace.yaml with minimumReleaseAge + trustPolicy (require-pnpm-hardening x2). commit+push
-- [ ] 2. Security: logout GET side-effect → POST form/action; no side effects in GET handlers (nextjs-no-side-effect-in-get-handler). commit+push
-- [ ] 3. Security: eliminate dangerouslySetInnerHTML — render markdown/comment bodies as safe JSX (no-danger x3 in comments/page, s/[shortId], CommentTree). commit+push
-- [ ] 4. Perf: parallelize independent sequential awaits + remove await-in-loop (server-sequential-independent-await x8, async-parallel x3, async-await-in-loop x1) across page.tsx, u/[username], domains, signup, search, settings/invite, api/vote. commit+push
-- [ ] 5. A11y: button type attrs, labels associated with controls, controlled inputs, keyboard handlers, remove autoFocus, fix anchor-is-valid/static-element-interactions in CommentTree/Voter/login/search/signup/settings. commit+push
-- [ ] 6. SEO: add per-page metadata (generateMetadata or metadata export) for the 13 pages missing it (nextjs-missing-metadata). commit+push
-- [ ] 7. Cleanup: remove unused exports (schema, SESSION_COOKIE, requireUser), fix js-index-maps in seed, hoist prefer-module-scope-static-value constant. commit+push
-- [ ] 8. Re-run react-doctor; confirm score improved and P0/P1/security cleared. Fix any stragglers. commit+push
+- [x] 1. Security: pnpm hardening (require-pnpm-hardening) — DONE, pushed
+- [x] 2. Security: logout GET → POST route (nextjs-no-side-effect-in-get-handler) — DONE, pushed
+- [x] 3. Security: removed dangerouslySetInnerHTML, safe JSX Markdown (no-danger x3) — DONE, pushed
+- [x] 4. Perf: parallelized awaits + removed N+1/await-in-loop — DONE, pushed
+- [x] 5. A11y: button types, labels, controlled inputs, keyboard buttons, no autofocus — DONE, pushed
+- [x] 6. SEO: per-page metadata via pageMeta helper (13 pages) — DONE, pushed
+- [x] 7. Cleanup: unused exports, index maps, hoisted constants — DONE, pushed
+- [x] 8. react-doctor re-run: score 39 → 82; only 1 remaining = justified false positive (u/[username] genuine data dependency, documented in code) — DONE, pushed
 - [ ] 9. react-scan: run `npx react-scan@latest http://localhost:3001` against key routes; fix render/perf issues it surfaces (memoization, keys, unnecessary re-renders). commit+push
 - [ ] 10. DRY: extract repeated patterns (byline/story-meta rendering, story-list fetch+attach, viewer vote lookups) into shared helpers/components. commit+push
 - [ ] 11. SRP/KISS: ensure each module/component has one responsibility; simplify over-complex code; no dead code. commit+push

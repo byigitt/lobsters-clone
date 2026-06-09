@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { memo, useState, useTransition } from "react";
 
-export function Voter({
+// Pure leaf island: memoized so a parent re-render never re-renders every
+// vote button on the page. Props are primitives, so the default shallow
+// comparison is correct.
+export const Voter = memo(function Voter({
   kind,
   id,
   initialVoted,
@@ -58,4 +61,4 @@ export function Voter({
       <span className="score">{score}</span>
     </div>
   );
-}
+});
