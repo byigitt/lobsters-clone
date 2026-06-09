@@ -1,8 +1,13 @@
 import { getCurrentUser } from "@/lib/auth";
 import { getHottest } from "@/lib/queries";
 import { StoryList } from "@/components/StoryList";
+import { pageMeta } from "@/lib/meta";
 import Link from "next/link";
 
+export const metadata = pageMeta(
+  "Hottest",
+  "The hottest computing stories, ranked by votes and discussion.",
+);
 export const dynamic = "force-dynamic";
 
 export default async function HomePage({

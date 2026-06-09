@@ -8,7 +8,18 @@ import { getStoriesByUser } from "@/lib/queries";
 import { StoryList } from "@/components/StoryList";
 import { ago, isNewUser } from "@/lib/time";
 
+import { pageMeta } from "@/lib/meta";
+
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const { username } = await params;
+  return pageMeta(username, `Profile and stories submitted by ${username}.`);
+}
 
 export default async function UserPage({
   params,

@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { getAllTags } from "@/lib/queries";
+import { pageMeta } from "@/lib/meta";
 
+export const metadata = pageMeta(
+  "Tags",
+  "Browse the predefined tags used to categorize stories.",
+);
 export const dynamic = "force-dynamic";
 
 export default async function TagsPage() {

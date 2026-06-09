@@ -4,7 +4,10 @@ import { db } from "@/db";
 import { users, invitations } from "@/db/schema";
 import { hashPassword, createSession, getCurrentUser } from "@/lib/auth";
 
+import { pageMeta } from "@/lib/meta";
+
 export const dynamic = "force-dynamic";
+export const metadata = pageMeta("Join", "Accept your invitation and join.");
 
 const USERNAME_RE = /^[A-Za-z][A-Za-z0-9_-]{1,24}$/;
 

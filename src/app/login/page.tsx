@@ -8,6 +8,9 @@ import {
   createSession,
 } from "@/lib/auth";
 
+import { pageMeta } from "@/lib/meta";
+
+export const metadata = pageMeta("Login", "Sign in to your account.");
 export const dynamic = "force-dynamic";
 
 async function login(formData: FormData) {

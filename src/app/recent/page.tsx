@@ -1,7 +1,12 @@
 import { getCurrentUser } from "@/lib/auth";
 import { getRecent } from "@/lib/queries";
 import { StoryList } from "@/components/StoryList";
+import { pageMeta } from "@/lib/meta";
 
+export const metadata = pageMeta(
+  "Recent",
+  "The most recently submitted stories.",
+);
 export const dynamic = "force-dynamic";
 
 export default async function RecentPage() {

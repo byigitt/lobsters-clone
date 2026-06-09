@@ -4,7 +4,9 @@ import { stories, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { StoryList } from "@/components/StoryList";
 import { getStory } from "@/lib/queries";
+import { pageMeta } from "@/lib/meta";
 
+export const metadata = pageMeta("Search", "Search stories and discussions.");
 export const dynamic = "force-dynamic";
 
 export default async function SearchPage({

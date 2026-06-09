@@ -4,7 +4,12 @@ import { db } from "@/db";
 import { comments, users, stories } from "@/db/schema";
 import { ago, isNewUser } from "@/lib/time";
 import { Markdown } from "@/components/Markdown";
+import { pageMeta } from "@/lib/meta";
 
+export const metadata = pageMeta(
+  "Comments",
+  "The latest comments across all discussions.",
+);
 export const dynamic = "force-dynamic";
 
 export default async function CommentsPage() {

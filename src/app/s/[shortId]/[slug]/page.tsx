@@ -11,7 +11,24 @@ import { CommentTree } from "@/components/CommentTree";
 import { Markdown } from "@/components/Markdown";
 import { ago, isNewUser } from "@/lib/time";
 
+import { stories as storiesTable } from "@/db/schema";
+import { pageMeta } from "@/lib/meta";
+
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ shortId: string; slug: string }>;
+}) {
+  const { shortId } = await params;
+  const row = await db
+    .select({ title: storiesTable.title })
+    .from(storiesTable)
+    .where(eq(storiesTable.shortId, shortId))
+    .get();
+  return pageMeta(row?.title ?? "Story");
+}
 
 export default async function StoryPage({
   params,

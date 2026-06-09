@@ -6,7 +6,18 @@ import { getCurrentUser } from "@/lib/auth";
 import { getStoriesByTag } from "@/lib/queries";
 import { StoryList } from "@/components/StoryList";
 
+import { pageMeta } from "@/lib/meta";
+
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ tag: string }>;
+}) {
+  const { tag } = await params;
+  return pageMeta(`Stories tagged ${tag}`, `Stories tagged ${tag}.`);
+}
 
 export default async function TagPage({
   params,

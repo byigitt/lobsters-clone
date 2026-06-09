@@ -2,7 +2,12 @@ import Link from "next/link";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { isNewUser } from "@/lib/time";
+import { pageMeta } from "@/lib/meta";
 
+export const metadata = pageMeta(
+  "Users",
+  "The public invitation tree of every member.",
+);
 export const dynamic = "force-dynamic";
 
 type Node = {

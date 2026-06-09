@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { pageMeta } from "@/lib/meta";
 
 const SITE = process.env.SITE_NAME || "Crab News";
+
+export const metadata = pageMeta(
+  "About",
+  "How this invite-only computing community works.",
+);
 
 export default function AboutPage() {
   return (
