@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { comments, users, stories } from "@/db/schema";
 import { ago, isNewUser } from "@/lib/time";
+import { Markdown } from "@/components/Markdown";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +46,9 @@ export default async function CommentsPage() {
                 {c.storyTitle}
               </Link>
             </div>
-            <div className="body" dangerouslySetInnerHTML={{ __html: c.body }} />
+            <div className="body">
+              <Markdown text={c.body} />
+            </div>
           </li>
         ))}
       </ul>

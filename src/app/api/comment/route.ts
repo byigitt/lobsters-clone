@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { comments, stories } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { shortId } from "@/lib/ids";
-import { renderMarkdown } from "@/lib/markdown";
 import { calcHotness } from "@/lib/hotness";
 
 export async function POST(req: Request) {
@@ -31,7 +30,7 @@ export async function POST(req: Request) {
       storyId,
       userId: user.id,
       parentId: typeof parentId === "number" ? parentId : null,
-      body: renderMarkdown(body),
+      body: body.trim().slice(0, 10000),
     })
     .run();
 

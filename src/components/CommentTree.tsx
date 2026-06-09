@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { CommentNode } from "@/lib/queries";
 import { Voter } from "./Voter";
+import { Markdown } from "./Markdown";
 import { ago, isNewUser } from "@/lib/time";
 
 function CommentItem({
@@ -49,10 +50,9 @@ function CommentItem({
               </>
             )}
           </div>
-          <div
-            className="body"
-            dangerouslySetInnerHTML={{ __html: node.body }}
-          />
+          <div className="body">
+            <Markdown text={node.body} />
+          </div>
           {replying && (
             <div style={{ margin: "0.4rem 0" }}>
               <textarea

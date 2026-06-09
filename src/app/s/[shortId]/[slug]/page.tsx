@@ -8,6 +8,7 @@ import { getStory, getComments } from "@/lib/queries";
 import { Tag } from "@/components/Tag";
 import { Voter } from "@/components/Voter";
 import { CommentTree } from "@/components/CommentTree";
+import { Markdown } from "@/components/Markdown";
 import { ago, isNewUser } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
@@ -91,11 +92,9 @@ export default async function StoryPage({
       </div>
 
       {story.description && (
-        <div
-          className="box"
-          style={{ marginLeft: "2.2rem" }}
-          dangerouslySetInnerHTML={{ __html: renderText(story.description) }}
-        />
+        <div className="box" style={{ marginLeft: "2.2rem" }}>
+          <Markdown text={story.description} />
+        </div>
       )}
 
       <CommentTree
@@ -106,17 +105,4 @@ export default async function StoryPage({
       />
     </main>
   );
-}
-
-function renderText(text: string): string {
-  // story descriptions are stored as raw text; render minimally
-  // (comments are pre-rendered to HTML on save)
-  const escaped = text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-  return escaped
-    .split(/\n{2,}/)
-    .map((p) => `<p>${p.replace(/\n/g, "<br/>")}</p>`)
-    .join("");
 }
