@@ -14,4 +14,3 @@ sqlite.pragma("foreign_keys = ON");
 if (process.env.NODE_ENV !== "production") globalForDb.sqlite = sqlite;
 
 export const db = drizzle(sqlite, { schema });
-export { schema };

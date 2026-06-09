@@ -11,6 +11,15 @@ export const metadata = pageMeta("Join", "Accept your invitation and join.");
 
 const USERNAME_RE = /^[A-Za-z][A-Za-z0-9_-]{1,24}$/;
 
+const ERR_MSG: Record<string, string> = {
+  username:
+    "Username must start with a letter and be 2–25 chars (letters, numbers, _ or -).",
+  password: "Password must be at least 6 characters.",
+  email: "Please enter a valid email address.",
+  taken: "That username is already taken.",
+  invite: "This invitation is no longer valid.",
+};
+
 async function register(formData: FormData) {
   "use server";
   const code = String(formData.get("code") || "");
@@ -104,15 +113,6 @@ export default async function SignupPage({
     );
   }
 
-  const errMsg: Record<string, string> = {
-    username:
-      "Username must start with a letter and be 2–25 chars (letters, numbers, _ or -).",
-    password: "Password must be at least 6 characters.",
-    email: "Please enter a valid email address.",
-    taken: "That username is already taken.",
-    invite: "This invitation is no longer valid.",
-  };
-
   return (
     <main>
       <h1 className="page-title">Join Crab News</h1>
@@ -120,7 +120,7 @@ export default async function SignupPage({
         You were invited by <strong>{invite.senderName}</strong>
         {invite.memo ? ` — “${invite.memo}”` : ""}. Welcome aboard.
       </div>
-      {error && <p className="error">{errMsg[error] || "Something went wrong."}</p>}
+      {error && <p className="error">{ERR_MSG[error] || "Something went wrong."}</p>}
       <form className="box" action={register} style={{ maxWidth: 460 }}>
         <input type="hidden" name="code" value={code} />
         <label htmlFor="username">Username</label>

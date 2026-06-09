@@ -135,8 +135,10 @@ async function main() {
     "I disagree with the framing but the data is solid.",
   ];
 
+  const userByName = new Map(created.map((u) => [u.username, u]));
+
   for (const s of SAMPLE) {
-    const author = created.find((u) => u.username === s.by)!;
+    const author = userByName.get(s.by)!;
     const createdAt = Math.floor(Date.now() / 1000) - s.hours * 3600;
     const sid = shortId();
     const domain = s.url ? new URL(s.url).hostname.replace(/^www\./, "") : null;

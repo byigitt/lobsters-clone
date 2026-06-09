@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { users, sessions, type User } from "@/db/schema";
 import { sessionToken } from "./ids";
 
-export const SESSION_COOKIE = "lobsters_session";
+const SESSION_COOKIE = "lobsters_session";
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
@@ -51,8 +51,4 @@ export async function getCurrentUser(): Promise<User | null> {
   return row?.user ?? null;
 }
 
-export async function requireUser(): Promise<User> {
-  const user = await getCurrentUser();
-  if (!user) throw new Error("UNAUTHORIZED");
-  return user;
-}
+
