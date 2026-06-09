@@ -5,7 +5,8 @@ import Link from "next/link";
 import type { CommentNode } from "@/lib/queries";
 import { Voter } from "./Voter";
 import { Markdown } from "./Markdown";
-import { ago, isNewUser } from "@/lib/time";
+import { AuthorLink } from "./AuthorLink";
+import { ago } from "@/lib/time";
 
 function CommentItem({
   node,
@@ -36,12 +37,10 @@ function CommentItem({
         />
         <div>
           <div className="byline">
-            <Link
-              href={`/u/${node.author.username}`}
-              className={`u-author ${isNewUser(node.author.createdAt) ? "newuser" : ""}`}
-            >
-              {node.author.username}
-            </Link>{" "}
+            <AuthorLink
+              username={node.author.username}
+              createdAt={node.author.createdAt}
+            />{" "}
             {ago(node.createdAt)}
             {loggedIn && (
               <>

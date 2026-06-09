@@ -9,7 +9,9 @@ import { Tag } from "@/components/Tag";
 import { Voter } from "@/components/Voter";
 import { CommentTree } from "@/components/CommentTree";
 import { Markdown } from "@/components/Markdown";
-import { ago, isNewUser } from "@/lib/time";
+import { AuthorLink } from "@/components/AuthorLink";
+import { ago } from "@/lib/time";
+import { commentLabel } from "@/lib/format";
 
 import { stories as storiesTable } from "@/db/schema";
 import { pageMeta } from "@/lib/meta";
@@ -94,15 +96,13 @@ export default async function StoryPage({
           {story.domain && <span className="domain">{story.domain}</span>}
           <div className="byline">
             {isText ? "authored by" : "via"}{" "}
-            <Link
-              href={`/u/${story.author.username}`}
-              className={`u-author ${isNewUser(story.author.createdAt) ? "newuser" : ""}`}
-            >
-              {story.author.username}
-            </Link>{" "}
+            <AuthorLink
+              username={story.author.username}
+              createdAt={story.author.createdAt}
+            />{" "}
             {ago(story.createdAt)}
             <span className="tagline-sep">|</span>
-            {story.commentCount} comment{story.commentCount === 1 ? "" : "s"}
+            {commentLabel(story.commentCount)}
           </div>
         </div>
       </div>

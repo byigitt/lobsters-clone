@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { StoryListItem } from "@/lib/queries";
 import { Tag } from "./Tag";
 import { Voter } from "./Voter";
-import { ago, isNewUser } from "@/lib/time";
+import { AuthorLink } from "./AuthorLink";
+import { ago } from "@/lib/time";
+import { commentLabel } from "@/lib/format";
 
 function StoryRow({
   story,
@@ -39,18 +41,14 @@ function StoryRow({
         )}
         <div className="byline">
           {isText ? "authored by" : "via"}{" "}
-          <Link
-            href={`/u/${story.author.username}`}
-            className={`u-author ${isNewUser(story.author.createdAt) ? "newuser" : ""}`}
-          >
-            {story.author.username}
-          </Link>{" "}
+          <AuthorLink
+            username={story.author.username}
+            createdAt={story.author.createdAt}
+          />{" "}
           {ago(story.createdAt)}
           <span className="tagline-sep">|</span>
           <Link href={storyPath} className="comments_label">
-            {story.commentCount === 0
-              ? "no comments"
-              : `${story.commentCount} comment${story.commentCount === 1 ? "" : "s"}`}
+            {commentLabel(story.commentCount)}
           </Link>
         </div>
       </div>

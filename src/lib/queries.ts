@@ -1,5 +1,5 @@
 import "server-only";
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { desc, eq, inArray, like, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   stories,
@@ -153,6 +153,20 @@ export async function getStoriesByDomain(domain: string, viewerId?: number) {
   const rows = await baseSelect()
     .where(eq(stories.domain, domain))
     .orderBy(desc(stories.createdAt))
+    .all();
+  return attachMeta(rows, viewerId);
+}
+
+export async function searchStories(
+  query: string,
+  viewerId?: number,
+  limit = 25,
+) {
+  const term = `%${query}%`;
+  const rows = await baseSelect()
+    .where(or(like(stories.title, term), like(stories.description, term)))
+    .orderBy(desc(stories.hotness))
+    .limit(limit)
     .all();
   return attachMeta(rows, viewerId);
 }

@@ -2,8 +2,9 @@ import Link from "next/link";
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { comments, users, stories } from "@/db/schema";
-import { ago, isNewUser } from "@/lib/time";
+import { ago } from "@/lib/time";
 import { Markdown } from "@/components/Markdown";
+import { AuthorLink } from "@/components/AuthorLink";
 import { pageMeta } from "@/lib/meta";
 
 export const metadata = pageMeta(
@@ -40,12 +41,7 @@ export default async function CommentsPage() {
         {rows.map((c) => (
           <li className="comment" key={c.id}>
             <div className="byline">
-              <Link
-                href={`/u/${c.authorName}`}
-                className={`u-author ${isNewUser(c.authorCreated) ? "newuser" : ""}`}
-              >
-                {c.authorName}
-              </Link>{" "}
+              <AuthorLink username={c.authorName} createdAt={c.authorCreated} />{" "}
               {ago(c.createdAt)} on{" "}
               <Link href={`/s/${c.storyShort}/${c.storySlug}`}>
                 {c.storyTitle}
